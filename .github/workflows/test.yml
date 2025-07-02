@@ -1,0 +1,44 @@
+name: TestCI - Reusable Suite
+
+on:
+  workflow_call:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  security_check:
+    name: Security Check (Brakeman)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Brakeman
+        run: |
+          echo "Brakeman Executado"          
+          ruby script.rb
+
+  features_tests:
+    name: Run Only Feature Specs
+    needs: security_check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Feature Specs
+        run: |
+          echo "Features tests Executado"
+          ruby script.rb
+         
+  non_features_tests:
+    name: Run All Except Feature Specs
+    needs: security_check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run non feature Specs
+        run: |
+          echo "Non Features tests Executado"
+          ruby script.rb

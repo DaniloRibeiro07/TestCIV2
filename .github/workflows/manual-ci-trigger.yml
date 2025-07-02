@@ -1,0 +1,24 @@
+name: Manual CI Trigger
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  run-tests:
+    if: github.event.label.name == 'trigger-ci'
+    uses: ./.github/workflows/test.yml
+   
+  remove-label-from-pr:
+    if: always() && github.event.label.name == 'trigger-ci'
+    needs: [run-tests]
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: 'Code checkout'
+        uses: actions/checkout@v4
+      - name: 'remove label'
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: 'trigger-ci'
